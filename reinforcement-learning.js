@@ -119,11 +119,6 @@ function getQValue(state, currentAction){
     return qTable[index][currentAction];
 }
 
-function getQValueX(state, action){
-    let index = qTable.findIndex(element => element.state.x === state.x && element.state.y === state.y);
-    return qTable[index][action];
-}
-
 function setQValue(state,currentAction, reward){
     let x = state.x;
     let y = state.y;
@@ -143,14 +138,13 @@ function findMaxQValue(state){
     let index = qTable.findIndex(element => element.state.x === state.x && element.state.y === state.y);
     qValues = qTable[index];
     let max = 0;
-    let myvalues = [];
+    let maxQValue = [];
     for(let action in qValues){
         if(action === 'state') continue;
         else if(qValues[action] === undefined) continue;
-        else myvalues.push(qValues[action]);
+        else maxQValue.push(qValues[action]);
     }
-    console.log(Math.max(...myvalues))
-    return Math.max(...myvalues);
+    return Math.max(...maxQValue);
 }
 
 function moveState(){

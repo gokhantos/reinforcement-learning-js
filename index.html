@@ -18,11 +18,27 @@
         position: absolute;
         z-index: 2;
     }
+    #container{
+        display: flex;
+    }
+    #startButton{
+        margin-left: 600px;
+        margin-top: 50px;
+        position: absolute;
+    }
+    #iteration{
+        margin-left: 600px;
+        position: absolute;
+    }
 </style>
 
 <body>
-    <canvas id="maze" width="500" height="500"></canvas>
-    <canvas id="player" width="50" height="50"></canvas>
+    <div id="container">
+        <canvas id="maze" width="500" height="500"></canvas>
+        <canvas id="player" width="50" height="50"></canvas>
+    </div>
+    <p id="iteration">Iteration: 0</p>
+    <button id="startButton" onclick="movePlayer()">Start Learning</button>
     <script>
         let c = document.getElementById('maze');
         let ctx = c.getContext('2d');
@@ -66,7 +82,7 @@
                         currentState = newState;
                         if(currentState.x === goalState.x && currentState.y === goalState.y){
                             setQValue(oldState,currentAction, 20)
-                            console.log(qTable)
+                            document.getElementById("iteration").innerText = "Iteration: " + (episode + 1);
                             currentState.x = 0;
                             currentState.y = 0;
                             episode++;
@@ -80,7 +96,6 @@
             }
 
         }
-        movePlayer();
 
     </script>
 </body>
