@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="reinforcement-learning.js"></script>
+    <title>Reinforcement Learning</title>
+</head>
+
+<style>
+    #maze {
+        background-color: wheat;
+        position: absolute;
+        z-index: 1;
+    }
+    #player{
+        background-color: darkslategray;
+        position: absolute;
+        z-index: 2;
+    }
+</style>
+
+<body>
+    <canvas id="maze" width="500" height="500"></canvas>
+    <canvas id="player" width="50" height="50"></canvas>
+    <script>
+        let c = document.getElementById('maze');
+        let ctx = c.getContext('2d');
+        main();
+        drawMaze();
+        function drawMaze(){
+            for(let i=0;i<100; i++){
+                if(maze[i].value === 0){
+                    ctx.fillRect(maze[i].x, maze[i].y, 50, 50);
+                    continue;
+                }
+                ctx.strokeRect(maze[i].x, maze[i].y, 50, 50);
+            }
+        }
+
+        let c2 = document.getElementById('player');
+        let ctx2 = c2.getContext('2d');
+        drawPlayer();
+        function drawPlayer(){
+            ctx2.fillStyle = "gray"
+            ctx2.fillRect(currentState.x, currentState.y, 50, 50)
+        }
+
+        function  movePlayer(){
+            let id = setInterval(frame, 50);
+            let episode = 0;
+            let instance = [];
+            function frame(){
+                if(episode === 100){
+                    clearInterval(id);
+                }else{
+                    moveState();
+                    let oldState = currentState;
+                    let newState = {x: currentState.x + tempState.x, y: currentState.y + tempState.y};
+                    let index = wallStates.findIndex(element => element.x === newState.x && element.y === newState.y);
+                    currentAction = actionName;
+                    if(index !== -1){
+                        setQValue(oldState, -10);
+                    }else{
+                        currentState = newState;
+                        if(currentState.x === goalState.x && currentState.y === goalState.y){
+                            setQValue(oldState, 20)
+                            console.log(qTable)
+                            currentState.x = 0;
+                            currentState.y = 0;
+                            episode++;
+                        }
+                        //if(instance.indexOf(newState)===-1) instance.push({state: newState, action: actionName});
+                        setQValue(oldState, -1);
+                    }
+                    c2.style.marginTop = currentState.y +'px';
+                    c2.style.marginLeft = currentState.x + 'px';
+                }
+            }
+
+        }
+        movePlayer();
+
+    </script>
+</body>
+</html>
