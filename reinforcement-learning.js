@@ -1,5 +1,5 @@
 let N = 10;
-let r = 10;
+let r = 20;
 let learningRate = 0.75;
 let discountRate = 0.75;
 let maze = {};
@@ -128,7 +128,7 @@ function setQValue(state,currentAction, reward){
     let x = state.x;
     let y = state.y;
     let index = qTable.findIndex(element => element.state.x === x && element.state.y === y);
-    let maxQValue = findMaxQValue(state);
+    let maxQValue = findMaxQValue(currentState);
     let oldQValue = getQValue(state, currentAction);
     let newQValue = (1- learningRate) * oldQValue + learningRate * (reward + discountRate * maxQValue);
     if(qTable[index] === undefined) return;

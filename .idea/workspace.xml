@@ -1,9 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="257c77ba-67da-47af-b31d-0776f50a7e46" name="Default Changelist" comment="">
+    <list default="true" id="257c77ba-67da-47af-b31d-0776f50a7e46" name="Default Changelist" comment="first commit">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/reinforcement-learning.js" beforeDir="false" afterPath="$PROJECT_DIR$/reinforcement-learning.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -43,14 +60,45 @@
       <updated>1605385276022</updated>
       <workItem from="1605385277073" duration="11851000" />
       <workItem from="1605440548553" duration="21723000" />
-      <workItem from="1605526330703" duration="4877000" />
+      <workItem from="1605526330703" duration="6274000" />
     </task>
+    <task id="LOCAL-00001" summary="first commit">
+      <created>1605536111032</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1605536111032</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="first commit" />
+    <option name="LAST_COMMIT_MESSAGE" value="first commit" />
+  </component>
   <component name="WindowStateProjectService">
+    <state x="446" y="74" key="Vcs.Push.Dialog.v2" timestamp="1605536115908">
+      <screen x="0" y="0" width="1707" height="680" />
+    </state>
+    <state x="446" y="74" key="Vcs.Push.Dialog.v2/0.0.1707.680@0.0.1707.680" timestamp="1605536115908" />
+    <state x="671" y="255" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1605536064946">
+      <screen x="0" y="0" width="1707" height="680" />
+    </state>
+    <state x="671" y="255" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1707.680@0.0.1707.680" timestamp="1605536064946" />
     <state x="383" y="174" key="run.anything.popup" timestamp="1605394433991">
       <screen x="72" y="27" width="1294" height="741" />
     </state>
