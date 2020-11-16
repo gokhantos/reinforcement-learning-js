@@ -8,10 +8,7 @@ let goalState = {x: 450, y:450};
 let actionsList = ['right', 'left', 'up', 'down'];
 let qTable = [];
 let wallStates = [];
-let currentAction = '';
-let reward = 0;
-let actionName = '';
-let tempState = {x: 0 , y: 0}
+
 
 function createPoints(){
     let point = [];
@@ -100,26 +97,24 @@ function bestAction(){
     let index = qTable.findIndex(element => element.state.x === x && element.state.y === y);
     let qValues = qTable[index];
     let possibleActions = findPossibleActions();
-    console.log(possibleActions)
-    for(let action of possibleActions){
-        console.log(getQValueX(currentState,action))
-    }
+    let actionName = null;
+    //console.log(possibleActions)
     for(let action of possibleActions){
         if(!actionName){
             actionName = action;
-            console.log("1 " + qValues[action])
+            //console.log("1 " + qValues[action])
         }else if((qValues[action] === qValues[actionName]) && (Math.random() > 0.5)){
             actionName = action;
-            console.log("2 " + qValues[action])
+            //console.log("2 " + qValues[action])
         }else if(qValues[action] > qValues[actionName]){
-            console.log("3 "+ qValues[action])
+            //console.log("3 "+ qValues[action])
             actionName = action;
         }
     }
-    console.log(actionName);
+    return actionName;
 }
 
-function getQValue(state){
+function getQValue(state, currentAction){
     let index = qTable.findIndex(element => element.state.x === state.x && element.state.y === state.y);
     return qTable[index][currentAction];
 }
@@ -129,12 +124,12 @@ function getQValueX(state, action){
     return qTable[index][action];
 }
 
-function setQValue(state, reward){
+function setQValue(state,currentAction, reward){
     let x = state.x;
     let y = state.y;
     let index = qTable.findIndex(element => element.state.x === x && element.state.y === y);
     let maxQValue = findMaxQValue(state);
-    let oldQValue = getQValue(state);
+    let oldQValue = getQValue(state, currentAction);
     let newQValue = (1- learningRate) * oldQValue + learningRate * (reward + discountRate * maxQValue);
     if(qTable[index] === undefined) return;
     if(currentAction === "right") qTable[index] = {state: {x: x, y: y}, right: qTable[index].right + newQValue, left: qTable[index].left, up: qTable[index].up, down: qTable[index].down }
@@ -146,32 +141,27 @@ function setQValue(state, reward){
 function findMaxQValue(state){
     let qValues = [];
     let index = qTable.findIndex(element => element.state.x === state.x && element.state.y === state.y);
-    let possibleActions = findPossibleActions()
+    qValues = qTable[index];
     let max = 0;
+    let myvalues = [];
     for(let action in qValues){
-        max = Math.max(max, qValues[action] || 0)
+        if(action === 'state') continue;
+        else if(qValues[action] === undefined) continue;
+        else myvalues.push(qValues[action]);
     }
-    return max;
+    console.log(Math.max(...myvalues))
+    return Math.max(...myvalues);
 }
 
 function moveState(){
-    /*
-    let actionName;
-    let count = 0;
-    for(let action of actionsList){
-        if(getQValue() !== 0 || getQValue() !== undefined) count++;
-    }
-    if(count === 0) actionName = randomAction();
-    if(count === 1) actionName = randomAction();
-    if(count >= 2) actionName = bestAction();
-    */
-    actionName = bestAction();
 
+    let actionName = bestAction();
+    let tempState = {x: 0 , y: 0}
     if(actionName === 'right') tempState.x = tempState.x + 50
     if(actionName === 'left') tempState.x = tempState.x - 50
     if(actionName === 'up') tempState.y = tempState.y - 50
     if(actionName === 'down') tempState.y = tempState.y + 50
-
+    return {action: tempState, actionName: actionName};
 }
 
 

@@ -54,24 +54,25 @@
                 if(episode === 100){
                     clearInterval(id);
                 }else{
-                    moveState();
+                    let {action, actionName} = moveState();
                     let oldState = currentState;
-                    let newState = {x: currentState.x + tempState.x, y: currentState.y + tempState.y};
+
+                    let newState = {x: currentState.x + action.x, y: currentState.y + action.y};
                     let index = wallStates.findIndex(element => element.x === newState.x && element.y === newState.y);
-                    currentAction = actionName;
+                    let currentAction = actionName;
                     if(index !== -1){
-                        setQValue(oldState, -10);
+                        setQValue(oldState, currentAction, -10);
                     }else{
                         currentState = newState;
                         if(currentState.x === goalState.x && currentState.y === goalState.y){
-                            setQValue(oldState, 20)
+                            setQValue(oldState,currentAction, 20)
                             console.log(qTable)
                             currentState.x = 0;
                             currentState.y = 0;
                             episode++;
+                        }else{
+                            setQValue(oldState,currentAction, -1);
                         }
-                        //if(instance.indexOf(newState)===-1) instance.push({state: newState, action: actionName});
-                        setQValue(oldState, -1);
                     }
                     c2.style.marginTop = currentState.y +'px';
                     c2.style.marginLeft = currentState.x + 'px';
