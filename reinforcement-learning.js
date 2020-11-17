@@ -92,10 +92,7 @@ function initializeQTable(){
 }
 
 function findPossibleActions(){
-    let index = qTable.find    #path{
-        position: absolute;
-        z-index: 3;
-    }Index(element => element.state.x === currentState.x && element.state.y === currentState.y);
+    let index = qTable.findIndex(element => element.state.x === currentState.x && element.state.y === currentState.y);
     let qValues = qTable[index];
     let possibleActions = [];
     for(let action in qValues){
