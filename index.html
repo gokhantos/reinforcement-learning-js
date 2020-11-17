@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
     <script src="reinforcement-learning.js"></script>
     <title>Reinforcement Learning</title>
 </head>
@@ -14,12 +16,12 @@
         z-index: 1;
     }
     #player{
-        background-color: darkslategray;
         position: absolute;
         z-index: 2;
     }
     #container{
         display: flex;
+        background-color: coral;
     }
     #startButton{
         margin-left: 600px;
@@ -42,6 +44,7 @@
     <script>
         let c = document.getElementById('maze');
         let ctx = c.getContext('2d');
+        let instance = [];
         main();
         drawMaze();
         function drawMaze(){
@@ -61,26 +64,47 @@
             ctx2.fillStyle = "gray"
             ctx2.fillRect(currentState.x, currentState.y, 50, 50)
         }
+        function drawPath(){
+            console.log(instance)
+            ctx.fillStyle = "gray"
+            for(let i=0;i<instance.length;i++){
+                ctx.fillRect(instance[i].x, instance[i].y, 50, 50);
+            }
+        }
+
+        function pushUnique(state){
+            let index = instance.findIndex(element => element.x === state.x && element.y === state.y);
+            if(index === -1){
+                instance.push(state);
+            }
+        }
+        function getInstance(state){
+            if(state.x === 0 && state.y === 0){
+                instance = [];
+            }
+            pushUnique(state);
+        }
 
         function  movePlayer(){
-            let id = setInterval(frame, 50);
+            let id = setInterval(frame, 20);
             let episode = 0;
-            let instance = [];
             function frame(){
                 if(episode === 100){
+                    drawPath()
                     clearInterval(id);
                 }else{
                     let {action, actionName} = moveState();
                     let oldState = currentState;
-
                     let newState = {x: currentState.x + action.x, y: currentState.y + action.y};
                     let index = wallStates.findIndex(element => element.x === newState.x && element.y === newState.y);
                     let currentAction = actionName;
                     if(index !== -1){
                         setQValue(oldState, currentAction, -10);
                     }else{
+                        getInstance(currentState)
                         currentState = newState;
                         if(currentState.x === goalState.x && currentState.y === goalState.y){
+                            getInstance(goalState)
                             setQValue(oldState,currentAction, 20)
                             document.getElementById("iteration").innerText = "Iteration: " + (episode + 1);
                             currentState.x = 0;
@@ -94,7 +118,6 @@
                     c2.style.marginLeft = currentState.x + 'px';
                 }
             }
-
         }
 
     </script>

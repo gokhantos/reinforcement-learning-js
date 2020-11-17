@@ -11,33 +11,47 @@ let wallStates = [];
 
 
 function createPoints(){
-    let point = [];
+    let points = [];
     for(let i=0; i<N; i++){
         for(let j=0; j<N; j++){
-            point.push({x: i*50, y: j*50, value: 1});
-        }
-    }
-    return point;
-}
-
-function mazeGenerator(){
-    let points = createPoints();
-    for(let i=0; i<points.length; i++){
-        if(points[i].x === 0 && points[i].y === 0){
-            points[i].value = 1;
-            continue;
-        }
-        if(points[i].x === N-1 && points[i].y === N-1){
-            points[i].value = 1;
-            continue;
-        }
-        if(Math.random()< 0.01 * r){
-            points[i].value = 0;
-            wallStates.push(points[i]);
+            points.push({x: i*50, y: j*50, value: 1, isVisited: false});
         }
     }
     maze = points;
 }
+
+function wallGenerator(){
+    for(let i=0; i<maze.length; i++){
+        if(maze[i].isVisited === false && Math.random()< 0.01 * r){
+            maze[i].value = 0;
+            wallStates.push(maze[i]);
+        }
+    }
+}
+
+
+function mazeGenerator(){
+    let initialState = {x:0, y:0};
+    let binaryActions = ['right', 'down'];
+    for(let i=0; i<maze.length; i++){
+        let actionName = binaryActions[Math.floor(Math.random()*2)]
+        let index = qTable.findIndex(element => element.state.x === initialState.x && element.state.y === initialState.y)
+        if(initialState.x === goalState.x && initialState.y === goalState.y){
+            maze[index] = {x: initialState.x, y: initialState.y, value: 1, isVisited: true};
+            break;
+        }
+        if(actionName === 'right' && qTable[index].right !== undefined) {
+            initialState.x = initialState.x + 50;
+            maze[index] = {x: initialState.x, y: initialState.y, value: 1, isVisited: true};
+        }
+        if(actionName === 'down' && qTable[index].down !== undefined) {
+            initialState.y = initialState.y + 50;
+            maze[index] = {x: initialState.x, y: initialState.y, value: 1, isVisited: true};
+        }
+    }
+}
+
+
 
 function initializeQTable(){
     for(let i=0;i<maze.length;i++){
@@ -69,12 +83,19 @@ function initializeQTable(){
             qTable.push({state: {x: maze[i].x, y: maze[i].y}, right: 0, left: undefined, up: 0, down: undefined});
             continue;
         }
+        if(maze[i].y === (N-1)*50 && maze[i].x === (N-1)*50){
+            qTable.push({state: {x: maze[i].x, y: maze[i].y}, right: undefined, left: 0, up: 0, down: undefined});
+            continue;
+        }
         qTable.push({state: {x: maze[i].x, y: maze[i].y}, right: 0, left: 0, up: 0, down: 0})
     }
 }
 
 function findPossibleActions(){
-    let index = qTable.findIndex(element => element.state.x === currentState.x && element.state.y === currentState.y);
+    let index = qTable.find    #path{
+        position: absolute;
+        z-index: 3;
+    }Index(element => element.state.x === currentState.x && element.state.y === currentState.y);
     let qValues = qTable[index];
     let possibleActions = [];
     for(let action in qValues){
@@ -160,6 +181,8 @@ function moveState(){
 
 
 function main(){
-    mazeGenerator(10,20);
+    createPoints();
     initializeQTable();
+    mazeGenerator()
+    wallGenerator()
 }
