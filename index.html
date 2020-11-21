@@ -21,17 +21,22 @@
     }
     #startButton{
         margin-left: 600px;
-        margin-top: 75px;
+        margin-top: 100px;
         position: absolute;
     }
     #changeMaze{
         margin-left: 600px;
-        margin-top: 125px;
+        margin-top: 150px;
+        position: absolute;
+    }
+    #time{
+        margin-left: 600px;
+        margin-top: 25px;
         position: absolute;
     }
     #iteration{
         margin-left: 600px;
-        margin-top: 25px;
+        margin-top: 50px;
         position: absolute;
     }
 </style>
@@ -39,15 +44,19 @@
 <body>
     <canvas id="maze" width="500" height="500"></canvas>
     <canvas id="player" width="50" height="50"></canvas>
+    <p id="time">Time: 0:00</p>
     <p id="iteration">Iteration: 0</p>
-    <button type="button" class="btn btn-dark" id="startButton" onclick="movePlayer()">Start Learning</button>
+    <button type="button" class="btn btn-dark" id="startButton" onclick="movePlayer2()">Start Learning</button>
     <button type="button" class="btn btn-dark" id="changeMaze" onclick="onClickChangeMaze()">Change Maze</button>
     <script>
         let c = document.getElementById('maze');
         let ctx = c.getContext('2d');
-        let instance = [];
-        main();
+        let finalPath = []; //array to store shortest path at the end
+        reinforcementLearning();
         drawMaze();
+        let c2 = document.getElementById('player');
+        let ctx2 = c2.getContext('2d');
+        drawPlayer();
         function drawMaze(){
             for(let i=0;i<100; i++){
                 if(maze[i].value === 0){
@@ -58,40 +67,80 @@
             }
         }
 
-        let c2 = document.getElementById('player');
-        let ctx2 = c2.getContext('2d');
-        drawPlayer();
         function drawPlayer(){
             ctx2.fillStyle = "gray"
             ctx2.fillRect(currentState.x, currentState.y, 50, 50)
         }
         function drawPath(){
-            console.log(instance)
             ctx.fillStyle = "gray"
-            for(let i=0;i<instance.length;i++){
-                ctx.fillRect(instance[i].x, instance[i].y, 50, 50);
+            for(let i=0;i<finalPath.length;i++){
+                ctx.fillRect(finalPath[i].x, finalPath[i].y, 50, 50);
             }
         }
 
-        function pushUnique(state){
-            let index = instance.findIndex(element => element.x === state.x && element.y === state.y);
-            if(index === -1){
-                instance.push(state);
-            }
-        }
-        function getInstance(state){
+        //pushing unique boxes into finalPath
+        function setPath(state){
             if(state.x === 0 && state.y === 0){
-                instance = [];
+                finalPath = [];
+            }else{
+                let index = finalPath.findIndex(element => element.x === state.x && element.y === state.y);
+                if(index === -1){
+                    finalPath.push(state);
+                }
             }
-            pushUnique(state);
         }
 
+        function millisToMinutesAndSeconds(millis) {
+            let minutes = Math.floor(millis / 60000);
+            let seconds = ((millis % 60000) / 1000).toFixed(0);
+            return "Time: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
+        }
+        function movePlayer2() {
+            let iteration = 100;
+            for(let i = 0; i < iteration; i++){
+                if (i === 100) {
+                    drawPath()
+                    document.getElementById("startButton").innerText = "Finished..."
+                } else {
+                    console.log()
+                    let {action, actionName} = moveState();
+                    let oldState = currentState;
+                    let newState = {x: currentState.x + action.x, y: currentState.y + action.y};
+                    let index = wallStates.findIndex(element => element.x === newState.x && element.y === newState.y);
+                    let currentAction = actionName;
+                    if (index !== -1) {
+                        setQValue(oldState, currentAction, -10);
+                    } else {
+                        setPath(currentState)
+                        currentState = newState;
+                        if (currentState.x === goalState.x && currentState.y === goalState.y) {
+                            setPath(goalState)
+                            setQValue(oldState, currentAction, 20)
+                            document.getElementById("iteration").innerText = "Iteration: " + (i + 1);
+                            currentState.x = 0;
+                            currentState.y = 0;
+                        } else {
+                            setQValue(oldState, currentAction, -1);
+                        }
+                    }
+                }
+                console.log('x');
+            }
+            console.log('finished');
+        }
+        //function to change position of player with animation
         function  movePlayer(){
+            document.getElementById("startButton").disabled = 'true';
+            document.getElementById("startButton").innerText = "Wait..."
+            let ms = 0;
             let id = setInterval(frame, 20);
             let episode = 0;
             function frame(){
+                ms += 20;
+                document.getElementById("time").innerText = millisToMinutesAndSeconds(ms)
                 if(episode === 100){
                     drawPath()
+                    document.getElementById("startButton").innerText = "Finished..."
                     clearInterval(id);
                 }else{
                     let {action, actionName} = moveState();
@@ -102,10 +151,10 @@
                     if(index !== -1){
                         setQValue(oldState, currentAction, -10);
                     }else{
-                        getInstance(currentState)
+                        setPath(currentState)
                         currentState = newState;
                         if(currentState.x === goalState.x && currentState.y === goalState.y){
-                            getInstance(goalState)
+                            setPath(goalState)
                             setQValue(oldState,currentAction, 20)
                             document.getElementById("iteration").innerText = "Iteration: " + (episode + 1);
                             currentState.x = 0;
@@ -121,14 +170,7 @@
             }
         }
         function onClickChangeMaze(){
-            maze = {};
-            qTable = [];
-            wallStates = [];
-            ctx.clearRect(0, 0, 500, 500);
-            ctx2.clearRect(0,0,50,50);
-            main()
-            drawMaze()
-            drawPlayer()
+            window.location.reload()
         }
 
     </script>

@@ -5,11 +5,10 @@ let discountRate = 0.75;
 let maze = {};
 let currentState = {x: 0, y: 0};
 let goalState = {x: 450, y:450};
-let actionsList = ['right', 'left', 'up', 'down'];
 let qTable = [];
 let wallStates = [];
 
-
+//creating array of objects to define map
 function createPoints(){
     let points = [];
     for(let i=0; i<N; i++){
@@ -19,17 +18,10 @@ function createPoints(){
     }
     maze = points;
 }
-
-function wallGenerator(){
-    for(let i=0; i<maze.length; i++){
-        if(maze[i].isVisited === false && Math.random()< 0.01 * r){
-            maze[i].value = 0;
-            wallStates.push(maze[i]);
-        }
-    }
-}
-
-
+/*Trying to solve maze with binary actions(right and left) to reach goal state which is at the
+bottom right of the maze and changing isVisited value to true not to create impossible mazes to
+solve.
+ */
 function mazeGenerator(){
     let initialState = {x:0, y:0};
     let binaryActions = ['right', 'down'];
@@ -51,8 +43,17 @@ function mazeGenerator(){
     }
 }
 
+//Creating wall states to draw on index.html with different color.
+function wallGenerator(){
+    for(let i=0; i<maze.length; i++){
+        if(maze[i].isVisited === false && Math.random()< 0.01 * r){
+            maze[i].value = 0;
+            wallStates.push(maze[i]);
+        }
+    }
+}
 
-
+//Initializing Q Table with 0 for possible actions, undefined for outside of the maze.
 function initializeQTable(){
     for(let i=0;i<maze.length;i++){
         if(maze[i].x === 0 && maze[i].y > 0 && maze[i].y< (N-1)*50 ){
@@ -90,7 +91,7 @@ function initializeQTable(){
         qTable.push({state: {x: maze[i].x, y: maze[i].y}, right: 0, left: 0, up: 0, down: 0})
     }
 }
-
+//Finding possible actions on currentState
 function findPossibleActions(){
     let index = qTable.findIndex(element => element.state.x === currentState.x && element.state.y === currentState.y);
     let qValues = qTable[index];
@@ -103,12 +104,7 @@ function findPossibleActions(){
     return possibleActions
 }
 
-function randomAction(){
-    let possibleActions = findPossibleActions();
-    let randomIndex = Math.floor(Math.random()* possibleActions.length);
-    return possibleActions[randomIndex];
-}
-
+//Finding the biggest qValue in possibleActions if there is equality it chooses randomly.
 function bestAction(){
     let x = currentState.x;
     let y = currentState.y;
@@ -116,27 +112,25 @@ function bestAction(){
     let qValues = qTable[index];
     let possibleActions = findPossibleActions();
     let actionName = null;
-    //console.log(possibleActions)
     for(let action of possibleActions){
         if(!actionName){
             actionName = action;
-            //console.log("1 " + qValues[action])
         }else if((qValues[action] === qValues[actionName]) && (Math.random() > 0.5)){
             actionName = action;
-            //console.log("2 " + qValues[action])
         }else if(qValues[action] > qValues[actionName]){
-            //console.log("3 "+ qValues[action])
             actionName = action;
         }
     }
     return actionName;
 }
 
+//Getting qValue of given action and state
 function getQValue(state, currentAction){
     let index = qTable.findIndex(element => element.state.x === state.x && element.state.y === state.y);
     return qTable[index][currentAction];
 }
 
+//Setting new qValue with Bellman Equation and updating qTable
 function setQValue(state,currentAction, reward){
     let x = state.x;
     let y = state.y;
@@ -151,11 +145,10 @@ function setQValue(state,currentAction, reward){
     if(currentAction === "down") qTable[index] = {state: {x: x, y: y}, right: qTable[index].right, left: qTable[index].left, up: qTable[index].up, down: qTable[index].down + newQValue }
 }
 
+//Finding max qValue to use it on Bellman Equation
 function findMaxQValue(state){
-    let qValues = [];
     let index = qTable.findIndex(element => element.state.x === state.x && element.state.y === state.y);
-    qValues = qTable[index];
-    let max = 0;
+    let qValues = qTable[index];
     let maxQValue = [];
     for(let action in qValues){
         if(action === 'state') continue;
@@ -164,11 +157,11 @@ function findMaxQValue(state){
     }
     return Math.max(...maxQValue);
 }
-
+//Changing position of state by bestAction
 function moveState(){
-
     let actionName = bestAction();
     let tempState = {x: 0 , y: 0}
+    if(actionName === undefined) return;
     if(actionName === 'right') tempState.x = tempState.x + 50
     if(actionName === 'left') tempState.x = tempState.x - 50
     if(actionName === 'up') tempState.y = tempState.y - 50
@@ -177,7 +170,10 @@ function moveState(){
 }
 
 
-function main(){
+function reinforcementLearning(){
+    maze = {};
+    qTable = [];
+    wallStates = [];
     createPoints();
     initializeQTable();
     mazeGenerator()
