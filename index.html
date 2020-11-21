@@ -46,7 +46,7 @@
     <canvas id="player" width="50" height="50"></canvas>
     <p id="time">Time: 0:00</p>
     <p id="iteration">Iteration: 0</p>
-    <button type="button" class="btn btn-dark" id="startButton" onclick="movePlayer2()">Start Learning</button>
+    <button type="button" class="btn btn-dark" id="startButton" onclick="movePlayer()">Start Learning</button>
     <button type="button" class="btn btn-dark" id="changeMaze" onclick="onClickChangeMaze()">Change Maze</button>
     <script>
         let c = document.getElementById('maze');
@@ -95,39 +95,7 @@
             let seconds = ((millis % 60000) / 1000).toFixed(0);
             return "Time: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
         }
-        function movePlayer2() {
-            let iteration = 100;
-            for(let i = 0; i < iteration; i++){
-                if (i === 100) {
-                    drawPath()
-                    document.getElementById("startButton").innerText = "Finished..."
-                } else {
-                    console.log()
-                    let {action, actionName} = moveState();
-                    let oldState = currentState;
-                    let newState = {x: currentState.x + action.x, y: currentState.y + action.y};
-                    let index = wallStates.findIndex(element => element.x === newState.x && element.y === newState.y);
-                    let currentAction = actionName;
-                    if (index !== -1) {
-                        setQValue(oldState, currentAction, -10);
-                    } else {
-                        setPath(currentState)
-                        currentState = newState;
-                        if (currentState.x === goalState.x && currentState.y === goalState.y) {
-                            setPath(goalState)
-                            setQValue(oldState, currentAction, 20)
-                            document.getElementById("iteration").innerText = "Iteration: " + (i + 1);
-                            currentState.x = 0;
-                            currentState.y = 0;
-                        } else {
-                            setQValue(oldState, currentAction, -1);
-                        }
-                    }
-                }
-                console.log('x');
-            }
-            console.log('finished');
-        }
+
         //function to change position of player with animation
         function  movePlayer(){
             document.getElementById("startButton").disabled = 'true';
